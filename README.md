@@ -4,7 +4,7 @@
 
 技术栈：Astro 7 + Tailwind CSS 4，部署在 Cloudflare Pages。
 
-线上地址：https://mywebsite-4rv.pages.dev/
+线上地址：https://ri7er.cn/
 
 ## 功能
 
