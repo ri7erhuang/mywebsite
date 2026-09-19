@@ -93,7 +93,7 @@ async function main() {
   );
 
   if (entries.length === 0) {
-    console.log(`\n没有待发布的文章。把 Markdown 文件放到： ${path.relative(ROOT, INBOX)}\\`);
+    console.log(`\n没有待发布的文章。把 Markdown 文件放到： ${path.relative(ROOT, INBOX)}/`);
     console.log("文件名会成为网址（可用 slug: 在 frontmatter 里指定）。\n");
     return;
   }
@@ -153,7 +153,7 @@ async function main() {
     }
   }
 
-  const status = execSync("git status --porcelain", { cwd: ROOT }).toString().trim();
+  const status = execSync("git status --porcelain -- src/content/blog", { cwd: ROOT }).toString().trim();
   if (!status) {
     console.log("\n没有需要提交的改动。");
     return;
@@ -166,7 +166,7 @@ async function main() {
 
   const titles = published.map((p) => p.title).join("、");
   const msg = published.length === 1 ? `发布文章：${titles}` : `发布 ${published.length} 篇文章：${titles}`;
-  execSync(`git add -A && git commit -m ${JSON.stringify(msg)}`, { cwd: ROOT, stdio: "inherit" });
+  execSync(`git add -- src/content/blog && git commit -m ${JSON.stringify(msg)}`, { cwd: ROOT, stdio: "inherit" });
 
   if (NO_PUSH) {
     console.log("\n已提交（--no-push，未推送）。");
