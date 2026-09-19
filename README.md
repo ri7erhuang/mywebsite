@@ -61,6 +61,14 @@ draft: false
 
 ## 部署
 
-推送到 GitHub 后由 Cloudflare Pages 自动构建，或本地执行 `npm run deploy`。
+已接入 Cloudflare Pages 的 GitHub 集成：
 
-发布前记得把 `astro.config.mjs` 里的 `site` 改成真实域名。
+- 推送到 `main` 分支 → 自动构建并发布到生产环境
+- 推送其他分支或开 PR → 生成预览环境
+- 构建命令：`npm run build`，输出目录：`dist`
+
+也可以本地手动部署（直接上传，不影响 Git 集成）：
+
+```sh
+npm run deploy
+```
