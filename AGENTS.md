@@ -5,6 +5,7 @@
 - `npm run dev` —— 启动本地开发服务器
 - `npm run build` —— 构建静态站点到 `dist/`
 - `npm run check` —— Astro 类型检查（改代码后运行）
+- `npm run publish` —— 把 `temp/` 收件箱里的 Markdown 发布上线（自动校验+提交+推送）
 - `npm run preview` —— 本地预览生产构建
 - `npm run deploy` —— 构建并部署到 Cloudflare Pages（Wrangler）
 - `npm run cf:login` —— 登录/授权 Wrangler
@@ -17,6 +18,7 @@
 - `src/data/tools.ts` —— `/tools` 展示的工具清单
 - `src/layouts/Layout.astro` —— 共用页面外壳、主题脚本、SEO 标签
 - `src/components/Header.astro`、`Footer.astro`、`ToolShell.astro`
+- `scripts/publish-post.mjs` —— `npm run publish` 使用的发布脚本（读取 `temp/` 收件箱）
 - `wrangler.jsonc` —— Cloudflare Pages 配置（`pages_build_output_dir: ./dist`）
 - 上线前记得把 `astro.config.mjs` 里的 `site` 换成真实域名
 

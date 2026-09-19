@@ -17,6 +17,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# publishing inbox (local drafts)
+temp/
+
 # macOS-specific files
 .DS_Store
 
