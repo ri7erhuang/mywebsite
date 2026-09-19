@@ -1,0 +1,37 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { BOOKMARKS } from "../data/bookmarks";
+---
+
+<Layout title="导航" description="常用的网站、工具与学习资源。">
+  <h1 class="text-3xl font-bold text-slate-900 dark:text-white">导航</h1>
+  <p class="mt-2 text-slate-500 dark:text-slate-400">我常去的网站和工具。</p>
+
+  <div class="mt-10 space-y-10">
+    {
+      BOOKMARKS.map((category) => (
+        <section>
+          <h2 class="mb-4 text-lg font-semibold text-slate-900 dark:text-white">{category.title}</h2>
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {category.items.map((item) => (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group rounded-lg border border-slate-200 bg-white p-4 transition hover:border-sky-400 hover:shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-500"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full bg-sky-500" />
+                  <span class="font-medium text-slate-900 group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400">
+                    {item.name}
+                  </span>
+                </div>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{item.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Layout>

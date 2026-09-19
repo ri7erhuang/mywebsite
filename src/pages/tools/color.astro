@@ -1,0 +1,124 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+const inputCls =
+  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-sm outline-none focus:border-sky-500 dark:border-slate-700 dark:bg-slate-900";
+const labelCls = "mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300";
+---
+
+<ToolShell title="颜色转换" description="HEX / RGB / HSL 互转与实时预览。">
+  <div class="grid gap-8 md:grid-cols-[1fr_auto]">
+    <div class="space-y-4">
+      <div>
+        <label class={labelCls} for="c-hex">HEX</label>
+        <input id="c-hex" class={inputCls} value="#3b82f6" placeholder="#3b82f6" />
+      </div>
+      <div>
+        <label class={labelCls} for="c-rgb">RGB</label>
+        <input id="c-rgb" class={inputCls} placeholder="rgb(59, 130, 246)" />
+      </div>
+      <div>
+        <label class={labelCls} for="c-hsl">HSL</label>
+        <input id="c-hsl" class={inputCls} placeholder="hsl(217, 91%, 60%)" />
+      </div>
+      <p id="c-status" class="text-sm text-slate-500 dark:text-slate-400"></p>
+    </div>
+    <div class="flex flex-col items-center gap-3">
+      <div id="c-preview" class="h-32 w-32 rounded-xl border border-slate-200 shadow-inner dark:border-slate-700"></div>
+      <input id="c-picker" type="color" value="#3b82f6" class="h-10 w-32 cursor-pointer rounded border border-slate-300 dark:border-slate-700" />
+    </div>
+  </div>
+</ToolShell>
+
+<script>
+  const hexInput = document.getElementById("c-hex") as HTMLInputElement;
+  const rgbInput = document.getElementById("c-rgb") as HTMLInputElement;
+  const hslInput = document.getElementById("c-hsl") as HTMLInputElement;
+  const picker = document.getElementById("c-picker") as HTMLInputElement;
+  const preview = document.getElementById("c-preview")!;
+  const status = document.getElementById("c-status")!;
+
+  type RGB = { r: number; g: number; b: number };
+
+  const clamp = (n: number, min = 0, max = 255) => Math.min(max, Math.max(min, n));
+
+  function hexToRgb(hex: string): RGB | null {
+    let h = hex.trim().replace(/^#/, "");
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    if (!/^[0-9a-fA-F]{6}$/.test(h)) return null;
+    return {
+      r: parseInt(h.slice(0, 2), 16),
+      g: parseInt(h.slice(2, 4), 16),
+      b: parseInt(h.slice(4, 6), 16),
+    };
+  }
+
+  function rgbToHex({ r, g, b }: RGB) {
+    return "#" + [r, g, b].map((v) => clamp(Math.round(v)).toString(16).padStart(2, "0")).join("");
+  }
+
+  function rgbToHsl({ r, g, b }: RGB) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
+    const d = max - min;
+    if (d !== 0) {
+      s = d / (1 - Math.abs(2 * l - 1));
+      switch (max) {
+        case r: h = ((g - b) / d) % 6; break;
+        case g: h = (b - r) / d + 2; break;
+        default: h = (r - g) / d + 4;
+      }
+      h *= 60;
+      if (h < 0) h += 360;
+    }
+    return { h: Math.round(h), s: Math.round(s * 100), l: Math.round(l * 100) };
+  }
+
+  function hslToRgb(h: number, s: number, l: number): RGB {
+    h = ((h % 360) + 360) % 360;
+    s /= 100; l /= 100;
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = l - c / 2;
+    let r = 0, g = 0, b = 0;
+    if (h < 60) [r, g, b] = [c, x, 0];
+    else if (h < 120) [r, g, b] = [x, c, 0];
+    else if (h < 180) [r, g, b] = [0, c, x];
+    else if (h < 240) [r, g, b] = [0, x, c];
+    else if (h < 300) [r, g, b] = [x, 0, c];
+    else [r, g, b] = [c, 0, x];
+    return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) };
+  }
+
+  function apply(rgb: RGB) {
+    const hex = rgbToHex(rgb);
+    const hsl = rgbToHsl(rgb);
+    hexInput.value = hex;
+    rgbInput.value = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+    hslInput.value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+    picker.value = hex;
+    preview.style.backgroundColor = hex;
+    status.textContent = "";
+  }
+
+  hexInput.addEventListener("input", () => {
+    const rgb = hexToRgb(hexInput.value);
+    if (rgb) apply(rgb);
+    else status.textContent = "";
+  });
+
+  rgbInput.addEventListener("input", () => {
+    const m = rgbInput.value.match(/(\d+)\D+(\d+)\D+(\d+)/);
+    if (m) apply({ r: clamp(+m[1]), g: clamp(+m[2]), b: clamp(+m[3]) });
+  });
+
+  hslInput.addEventListener("input", () => {
+    const m = hslInput.value.match(/(\d+)\D+(\d+)%\D+(\d+)%/);
+    if (m) apply(hslToRgb(+m[1], +m[2], +m[3]));
+  });
+
+  picker.addEventListener("input", () => apply(hexToRgb(picker.value)!));
+
+  apply({ r: 59, g: 130, b: 246 });
+</script>

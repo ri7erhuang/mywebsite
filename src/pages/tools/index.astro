@@ -1,0 +1,25 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { TOOLS } from "../../data/tools";
+---
+
+<Layout title="工具" description="一些常用的在线小工具。">
+  <h1 class="text-3xl font-bold text-slate-900 dark:text-white">在线工具</h1>
+  <p class="mt-2 text-slate-500 dark:text-slate-400">全部在浏览器本地运行，数据不会上传。</p>
+
+  <div class="mt-8 grid gap-4 sm:grid-cols-2">
+    {
+      TOOLS.map((tool) => (
+        <a
+          href={tool.href}
+          class="group rounded-xl border border-slate-200 bg-white p-5 transition hover:border-sky-400 hover:shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-500"
+        >
+          <h2 class="font-semibold text-slate-900 group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400">
+            {tool.name}
+          </h2>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{tool.description}</p>
+        </a>
+      ))
+    }
+  </div>
+</Layout>

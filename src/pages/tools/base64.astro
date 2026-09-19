@@ -1,0 +1,71 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+const areaCls =
+  "h-40 w-full resize-y rounded-lg border border-slate-300 bg-white p-3 font-mono text-sm outline-none focus:border-sky-500 dark:border-slate-700 dark:bg-slate-900";
+const btn = "rounded-lg px-4 py-2 text-sm font-medium transition";
+---
+
+<ToolShell title="Base64 编解码" description="文本与 Base64 互转，支持中文（UTF-8）。">
+  <div class="grid gap-6 md:grid-cols-2">
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300" for="b64-plain">
+        原始文本
+      </label>
+      <textarea id="b64-plain" class={areaCls} placeholder="输入要编码的文本…"></textarea>
+    </div>
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300" for="b64-encoded">
+        Base64
+      </label>
+      <textarea id="b64-encoded" class={areaCls} placeholder="输入要解码的 Base64…"></textarea>
+    </div>
+  </div>
+
+  <div class="mt-4 flex flex-wrap gap-3">
+    <button id="encode-btn" class={`${btn} bg-sky-600 text-white hover:bg-sky-500`}>文本 → Base64</button>
+    <button id="decode-btn" class={`${btn} border border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800`}>Base64 → 文本</button>
+  </div>
+
+  <p id="b64-status" class="mt-3 text-sm text-slate-500 dark:text-slate-400"></p>
+</ToolShell>
+
+<script>
+  const plain = document.getElementById("b64-plain") as HTMLTextAreaElement;
+  const encoded = document.getElementById("b64-encoded") as HTMLTextAreaElement;
+  const status = document.getElementById("b64-status")!;
+
+  const enc = new TextEncoder();
+  const dec = new TextDecoder();
+
+  function setStatus(text: string, ok: boolean) {
+    status.textContent = text;
+    status.className = `mt-3 text-sm ${ok ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`;
+  }
+
+  function bytesToBase64(bytes: Uint8Array) {
+    let bin = "";
+    for (const b of bytes) bin += String.fromCharCode(b);
+    return btoa(bin);
+  }
+
+  function base64ToBytes(b64: string) {
+    const bin = atob(b64.trim());
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  document.getElementById("encode-btn")?.addEventListener("click", () => {
+    encoded.value = bytesToBase64(enc.encode(plain.value));
+    setStatus("编码完成 ✓", true);
+  });
+
+  document.getElementById("decode-btn")?.addEventListener("click", () => {
+    try {
+      plain.value = dec.decode(base64ToBytes(encoded.value));
+      setStatus("解码完成 ✓", true);
+    } catch {
+      setStatus("解码失败：不是有效的 Base64 字符串", false);
+    }
+  });
+</script>

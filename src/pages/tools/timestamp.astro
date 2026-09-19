@@ -1,0 +1,126 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+const inputCls =
+  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 dark:border-slate-700 dark:bg-slate-900";
+const outCls =
+  "mt-2 rounded-lg bg-slate-100 px-3 py-2 font-mono text-sm break-all dark:bg-slate-800";
+const labelCls = "mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300";
+---
+
+<ToolShell title="时间戳转换" description="Unix 时间戳与本地日期时间互转，全部在本地计算。">
+  <div class="space-y-10">
+    <section>
+      <h2 class="mb-4 text-lg font-semibold text-slate-900 dark:text-white">日期时间 → 时间戳</h2>
+      <label class={labelCls} for="dt-input">选择日期时间</label>
+      <input id="dt-input" type="datetime-local" step="1" class={inputCls} />
+      <div class="mt-4 space-y-3">
+        <div>
+          <span class={labelCls}>Unix 秒</span>
+          <div id="dt-seconds" class={outCls}>—</div>
+        </div>
+        <div>
+          <span class={labelCls}>Unix 毫秒</span>
+          <div id="dt-millis" class={outCls}>—</div>
+        </div>
+        <div>
+          <span class={labelCls}>ISO 8601</span>
+          <div id="dt-iso" class={outCls}>—</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="mb-4 text-lg font-semibold text-slate-900 dark:text-white">时间戳 → 日期时间</h2>
+      <div class="flex gap-2">
+        <input id="ts-input" type="number" placeholder="例如 1758268800" class={inputCls} />
+        <select
+          id="ts-unit"
+          class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+        >
+          <option value="s">秒</option>
+          <option value="ms">毫秒</option>
+        </select>
+      </div>
+      <div class="mt-4 space-y-3">
+        <div>
+          <span class={labelCls}>本地时间</span>
+          <div id="ts-local" class={outCls}>—</div>
+        </div>
+        <div>
+          <span class={labelCls}>UTC 时间</span>
+          <div id="ts-utc" class={outCls}>—</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="flex gap-3">
+      <button id="now-btn" type="button" class="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-500">
+        填入当前时间
+      </button>
+      <button id="copy-btn" type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">
+        复制当前时间戳
+      </button>
+    </div>
+  </div>
+</ToolShell>
+
+<script>
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T | null;
+
+  const dtInput = $<HTMLInputElement>("dt-input");
+  const tsInput = $<HTMLInputElement>("ts-input");
+  const tsUnit = $<HTMLSelectElement>("ts-unit");
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  function toLocalInput(d: Date) {
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  function renderFromDate() {
+    if (!dtInput?.value) return;
+    const d = new Date(dtInput.value);
+    if (isNaN(d.getTime())) return;
+    $("dt-seconds")!.textContent = String(Math.floor(d.getTime() / 1000));
+    $("dt-millis")!.textContent = String(d.getTime());
+    $("dt-iso")!.textContent = d.toISOString();
+  }
+
+  function renderFromTs() {
+    const raw = Number(tsInput?.value);
+    if (!tsInput?.value || isNaN(raw)) {
+      $("ts-local")!.textContent = "—";
+      $("ts-utc")!.textContent = "—";
+      return;
+    }
+    const ms = tsUnit?.value === "ms" ? raw : raw * 1000;
+    const d = new Date(ms);
+    if (isNaN(d.getTime())) return;
+    $("ts-local")!.textContent = d.toLocaleString("zh-CN", { hour12: false });
+    $("ts-utc")!.textContent = d.toISOString().replace("T", " ").replace("Z", " UTC");
+  }
+
+  dtInput?.addEventListener("input", renderFromDate);
+  tsInput?.addEventListener("input", renderFromTs);
+  tsUnit?.addEventListener("change", renderFromTs);
+
+  $("now-btn")?.addEventListener("click", () => {
+    const now = new Date();
+    if (dtInput) dtInput.value = toLocalInput(now);
+    if (tsInput) tsInput.value = String(Math.floor(now.getTime() / 1000));
+    if (tsUnit) tsUnit.value = "s";
+    renderFromDate();
+    renderFromTs();
+  });
+
+  $("copy-btn")?.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(String(Math.floor(Date.now() / 1000)));
+    const btn = $("copy-btn")!;
+    const old = btn.textContent;
+    btn.textContent = "已复制！";
+    setTimeout(() => (btn.textContent = old), 1200);
+  });
+
+  if (dtInput) dtInput.value = toLocalInput(new Date());
+  renderFromDate();
+</script>

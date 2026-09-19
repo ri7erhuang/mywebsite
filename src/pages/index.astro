@@ -1,0 +1,82 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { SITE } from "../consts";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const sections = [
+  {
+    title: "博客",
+    href: "/blog",
+    description: "技术笔记与生活随笔，用 Markdown 写作。",
+  },
+  {
+    title: "导航",
+    href: "/nav",
+    description: "我常用的网站、工具与学习资源收藏。",
+  },
+  {
+    title: "工具",
+    href: "/tools",
+    description: "时间戳、JSON、Base64、颜色、二维码等在线小工具。",
+  },
+];
+
+const fmt = new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium" });
+---
+
+<Layout>
+  <section class="py-8">
+    <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
+      {SITE.title}
+    </h1>
+    <p class="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
+      {SITE.description}
+    </p>
+  </section>
+
+  <section class="grid gap-4 sm:grid-cols-3">
+    {
+      sections.map((s) => (
+        <a
+          href={s.href}
+          class="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-sky-400 hover:shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-500"
+        >
+          <h2 class="font-semibold text-slate-900 dark:text-white">{s.title}</h2>
+          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">{s.description}</p>
+        </a>
+      ))
+    }
+  </section>
+
+  <section class="mt-14">
+    <div class="flex items-baseline justify-between">
+      <h2 class="text-2xl font-semibold text-slate-900 dark:text-white">最新文章</h2>
+      <a href="/blog" class="text-sm text-sky-600 hover:underline dark:text-sky-400">查看全部 →</a>
+    </div>
+    <ul class="mt-4 divide-y divide-slate-200 dark:divide-slate-800">
+      {
+        posts.map((post) => (
+          <li class="py-4">
+            <a href={`/blog/${post.id}`} class="group flex flex-col gap-1">
+              <div class="flex items-baseline justify-between gap-4">
+                <span class="font-medium text-slate-900 group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400">
+                  {post.data.title}
+                </span>
+                <time class="shrink-0 text-sm text-slate-400" datetime={post.data.pubDate.toISOString()}>
+                  {fmt.format(post.data.pubDate)}
+                </time>
+              </div>
+              {post.data.description && (
+                <span class="text-sm text-slate-500 dark:text-slate-400">{post.data.description}</span>
+              )}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Layout>
