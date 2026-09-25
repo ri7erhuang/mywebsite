@@ -1,82 +1,127 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
-import { SITE } from "../consts";
+import { BOOKMARKS } from "../data/bookmarks";
+import { TOOLS } from "../data/tools";
 
-const posts = (await getCollection("blog", ({ data }) => !data.draft))
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 
-const sections = [
-  {
-    title: "博客",
-    href: "/blog",
-    description: "技术笔记与生活随笔，用 Markdown 写作。",
-  },
-  {
-    title: "导航",
-    href: "/nav",
-    description: "我常用的网站、工具与学习资源收藏。",
-  },
-  {
-    title: "工具",
-    href: "/tools",
-    description: "时间戳、JSON、Base64、颜色、二维码等在线小工具。",
-  },
+const bookmarkCount = BOOKMARKS.reduce((n, c) => n + c.items.length, 0);
+
+const entries = [
+  { cmd: "blog", href: "/blog", desc: "技术笔记、踩坑记录", count: `${allPosts.length} 篇` },
+  { cmd: "nav", href: "/nav", desc: "被我日常验证过的站点收藏", count: `${bookmarkCount} 站` },
+  { cmd: "tools", href: "/tools", desc: "JSON / 时间戳 / Base64 / 颜色 / 二维码", count: `${TOOLS.length} 个` },
 ];
 
-const fmt = new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium" });
+const fmt = new Intl.DateTimeFormat("zh-CN", { month: "2-digit", day: "2-digit" });
 ---
 
 <Layout>
-  <section class="py-8">
-    <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
-      {SITE.title}
-    </h1>
-    <p class="mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-      {SITE.description}
-    </p>
-  </section>
-
-  <section class="grid gap-4 sm:grid-cols-3">
-    {
-      sections.map((s) => (
-        <a
-          href={s.href}
-          class="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-sky-400 hover:shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-500"
-        >
-          <h2 class="font-semibold text-slate-900 dark:text-white">{s.title}</h2>
-          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">{s.description}</p>
-        </a>
-      ))
-    }
-  </section>
-
-  <section class="mt-14">
-    <div class="flex items-baseline justify-between">
-      <h2 class="text-2xl font-semibold text-slate-900 dark:text-white">最新文章</h2>
-      <a href="/blog" class="text-sm text-sky-600 hover:underline dark:text-sky-400">查看全部 →</a>
+  <div class="relative overflow-x-clip">
+    <div
+      class="pointer-events-none absolute -inset-x-10 -top-10 h-[420px] [background-image:linear-gradient(to_right,rgba(100,116,139,0.16)_1px,transparent_1px),linear-gradient(to_bottom,rgba(100,116,139,0.16)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_at_top,black,transparent_72%)] dark:[background-image:linear-gradient(to_right,rgba(148,163,184,0.14)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.14)_1px,transparent_1px)]"
+    >
     </div>
-    <ul class="mt-4 divide-y divide-slate-200 dark:divide-slate-800">
-      {
-        posts.map((post) => (
-          <li class="py-4">
-            <a href={`/blog/${post.id}`} class="group flex flex-col gap-1">
-              <div class="flex items-baseline justify-between gap-4">
-                <span class="font-medium text-slate-900 group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400">
-                  {post.data.title}
+
+    <section class="relative pt-6">
+      <p class="font-mono text-sm text-slate-500 dark:text-slate-500">
+        <span class="text-emerald-600 dark:text-emerald-400">$</span> ri7er@perf ~ <span class="cursor">▊</span>
+      </p>
+      <h1
+        class="mt-5 font-mono text-4xl font-bold leading-[1.15] tracking-tight text-slate-900 sm:text-6xl dark:text-slate-50"
+      >
+        把性能<span class="text-emerald-600 dark:text-emerald-400">剖析</span>清楚，<br />
+        再把笔记写成人能读的样子。
+      </h1>
+      <p class="mt-6 max-w-xl font-mono text-[0.95rem] leading-relaxed text-slate-600 dark:text-slate-400">
+        Android framework / Perfetto / JNI 方向。这个站点记录我读源码、抓 trace、修卡顿的过程，
+        顺带放几个自己天天在用小工具。
+      </p>
+    </section>
+
+    <section class="relative mt-14">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600">
+        // entries
+      </p>
+      <ul class="mt-4 divide-y divide-slate-300/70 border-y border-slate-300/70 dark:divide-slate-800 dark:border-slate-800">
+        {
+          entries.map((e) => (
+            <li>
+              <a
+                href={e.href}
+                class="group flex items-baseline gap-3 py-4 font-mono transition-colors hover:bg-slate-900/[0.03] dark:hover:bg-white/[0.04]"
+              >
+                <span class="text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                  ▸
                 </span>
-                <time class="shrink-0 text-sm text-slate-400" datetime={post.data.pubDate.toISOString()}>
+                <span class="w-24 shrink-0 font-semibold text-slate-900 dark:text-slate-100">
+                  {e.cmd}
+                </span>
+                <span class="flex-1 text-sm text-slate-500 dark:text-slate-400">{e.desc}</span>
+                <span class="hidden shrink-0 text-xs text-slate-400 sm:inline dark:text-slate-600">
+                  {e.count}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="relative mt-14">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600">
+        // latest
+      </p>
+      <ul class="mt-4 space-y-2">
+        {
+          posts.map((post) => (
+            <li>
+              <a
+                href={`/blog/${post.id}`}
+                class="group flex items-start gap-4 rounded-md px-2 py-3 font-mono hover:bg-slate-900/[0.03] dark:hover:bg-white/[0.05]"
+              >
+                <time class="w-14 shrink-0 pt-0.5 text-xs text-slate-400 dark:text-slate-600">
                   {fmt.format(post.data.pubDate)}
                 </time>
-              </div>
-              {post.data.description && (
-                <span class="text-sm text-slate-500 dark:text-slate-400">{post.data.description}</span>
-              )}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-slate-900 group-hover:text-emerald-700 dark:text-slate-100 dark:group-hover:text-emerald-300">
+                    {post.data.title}
+                  </p>
+                  {post.data.description && (
+                    <p class="mt-1 truncate text-xs text-slate-500 dark:text-slate-500">
+                      {post.data.description}
+                    </p>
+                  )}
+                </div>
+                <span class="hidden shrink-0 pt-0.5 text-xs text-slate-400 sm:inline dark:text-slate-600">
+                  {post.data.tags.map((t) => `[${t}]`).join(" ")}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a
+        href="/blog"
+        class="mt-4 inline-block font-mono text-sm text-emerald-700 hover:underline dark:text-emerald-400"
+      >
+        $ ls /blog --all →
+      </a>
+    </section>
+  </div>
 </Layout>
+
+<style>
+  .cursor {
+    animation: blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+</style>

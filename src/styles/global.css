@@ -5,6 +5,10 @@
 @theme {
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", "PingFang SC", "Microsoft YaHei", monospace;
+  --color-paper: #f6f7f4;
+  --color-ink: #0b0f14;
 }
 
 html {
@@ -12,36 +16,40 @@ html {
 }
 
 body {
-  @apply bg-slate-50 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-200;
+  @apply bg-paper text-slate-800 antialiased dark:bg-ink dark:text-slate-200;
 }
 
+/* 正文阅读区：标题用等宽体保持终端感，正文保留无衬线以保证长文可读 */
 .prose-content :where(h2) {
-  @apply mt-10 mb-3 text-2xl font-semibold text-slate-900 dark:text-slate-100;
+  @apply mt-10 mb-3 font-mono text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100;
 }
 .prose-content :where(h3) {
-  @apply mt-6 mb-2 text-xl font-semibold text-slate-900 dark:text-slate-100;
+  @apply mt-6 mb-2 font-mono text-xl font-semibold text-slate-900 dark:text-slate-100;
 }
 .prose-content :where(p) {
   @apply my-4 leading-7;
 }
 .prose-content :where(a) {
-  @apply text-sky-600 underline underline-offset-2 hover:text-sky-500 dark:text-sky-400;
+  @apply text-emerald-700 underline decoration-emerald-600/40 underline-offset-2 hover:text-emerald-600 dark:text-emerald-400 dark:decoration-emerald-400/40;
 }
 .prose-content :where(ul) {
-  @apply my-4 list-disc pl-6;
+  @apply my-4 list-disc pl-6 marker:text-slate-400 dark:marker:text-slate-600;
 }
 .prose-content :where(ol) {
-  @apply my-4 list-decimal pl-6;
+  @apply my-4 list-decimal pl-6 marker:text-slate-400 dark:marker:text-slate-600;
 }
 .prose-content :where(code):not(pre code) {
-  @apply rounded bg-slate-200 px-1.5 py-0.5 text-sm dark:bg-slate-800;
+  @apply rounded bg-slate-900/[0.07] px-1.5 py-0.5 font-mono text-sm dark:bg-white/10;
 }
 .prose-content :where(pre) {
-  @apply my-5 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100;
+  @apply my-5 overflow-x-auto rounded-lg border border-slate-800 bg-ink p-4 font-mono text-sm text-slate-100;
 }
 .prose-content :where(blockquote) {
-  @apply my-4 border-l-4 border-slate-300 pl-4 text-slate-600 dark:border-slate-700 dark:text-slate-400;
+  @apply my-4 border-l-2 border-emerald-600/50 pl-4 text-slate-600 dark:border-emerald-400/50 dark:text-slate-400;
 }
 .prose-content :where(img) {
   @apply my-6 rounded-lg;
+}
+.prose-content :where(hr) {
+  @apply my-10 border-slate-300/70 dark:border-slate-800;
 }

@@ -7,10 +7,15 @@ import { SITE } from "../consts";
 interface Props {
   title?: string;
   description?: string;
+  container?: "default" | "narrow" | "wide";
 }
 
-const { title, description = SITE.description } = Astro.props;
-const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
+const { title, description = SITE.description, container = "default" } = Astro.props;
+const containerClass = {
+  default: "max-w-4xl",
+  narrow: "max-w-2xl",
+  wide: "max-w-6xl",
+}[container];
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 ---
 
@@ -22,10 +27,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-    <title>{pageTitle}</title>
+    <title>{title ? `${title} · ${SITE.title}` : SITE.title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta property="og:title" content={pageTitle} />
+    <meta property="og:title" content={title ? `${title} · ${SITE.title}` : SITE.title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <script is:inline>
@@ -38,7 +43,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
   </head>
   <body class="flex min-h-screen flex-col">
     <Header />
-    <main class="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
+    <main class:list={["mx-auto w-full flex-1 px-4 py-10", containerClass]}>
       <slot />
     </main>
     <Footer />

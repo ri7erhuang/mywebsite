@@ -1,0 +1,107 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const sections = [
+  { no: "01", title: "博客", href: "/blog", desc: "读源码、抓 trace、修卡顿的完整记录。" },
+  { no: "02", title: "导航", href: "/nav", desc: "我真实在用的站点，不收录二手清单。" },
+  { no: "03", title: "工具", href: "/tools", desc: "五个不用装、不用登录的小工具。" },
+];
+
+const fmt = new Intl.DateTimeFormat("zh-CN", { dateStyle: "long" });
+---
+
+<Layout title="编辑部风（存档）" container="wide">
+  <meta name="robots" content="noindex" />
+  <div class="grid gap-x-16 gap-y-14 pt-4 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+    <section class="md:sticky md:top-24 md:self-start">
+      <p class="text-xs uppercase tracking-[0.35em] text-slate-400 dark:text-slate-500">
+        ri7er.cn
+      </p>
+      <h1 class="mt-6 font-serif text-5xl leading-[1.1] tracking-tight text-slate-900 sm:text-6xl dark:text-white">
+        性能<br />是一份<br />
+        <em class="not-italic text-sky-700 dark:text-sky-400">长期笔记</em>
+      </h1>
+      <p class="mt-8 max-w-sm text-[0.95rem] leading-8 text-slate-600 dark:text-slate-400">
+        我做 Android 性能优化。这里不放「十分钟看懂 XXX」，只留我自己被问题追着跑、
+        最后把结论写下来的那些晚上。
+      </p>
+      <ul class="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {
+          sections.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                class="text-slate-500 underline decoration-slate-300 decoration-1 underline-offset-8 transition-colors hover:text-slate-900 hover:decoration-sky-500 dark:text-slate-400 dark:decoration-slate-700 dark:hover:text-white"
+              >
+                {s.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section>
+      <div class="flex items-baseline justify-between border-b border-slate-900 pb-3 dark:border-slate-200">
+        <h2 class="font-serif text-2xl text-slate-900 dark:text-white">最近几篇</h2>
+        <a
+          href="/blog"
+          class="text-xs uppercase tracking-[0.2em] text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+        >
+          全部
+        </a>
+      </div>
+      <ol>
+        {
+          posts.map((post, i) => (
+            <li class="border-b border-slate-200 dark:border-slate-800">
+              <a href={`/blog/${post.id}`} class="group block py-8">
+                <div class="flex items-baseline gap-5">
+                  <span class="font-serif text-sm text-slate-300 dark:text-slate-600">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div class="min-w-0 flex-1">
+                    <h3 class="font-serif text-2xl leading-snug text-slate-900 transition-colors group-hover:text-sky-700 sm:text-[1.75rem] dark:text-slate-100 dark:group-hover:text-sky-300">
+                      {post.data.title}
+                    </h3>
+                    {post.data.description && (
+                      <p class="mt-3 text-[0.95rem] leading-7 text-slate-600 dark:text-slate-400">
+                        {post.data.description}
+                      </p>
+                    )}
+                    <p class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 dark:text-slate-500">
+                      <time datetime={post.data.pubDate.toISOString()}>{fmt.format(post.data.pubDate)}</time>
+                      {post.data.tags.map((t) => (
+                        <span class="uppercase tracking-[0.2em]">#{t}</span>
+                      ))}
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="mt-14 grid gap-10 sm:grid-cols-3">
+        {
+          sections.map((s) => (
+            <a href={s.href} class="group block">
+              <p class="font-serif text-3xl text-slate-200 transition-colors group-hover:text-sky-600 dark:text-slate-800 dark:group-hover:text-sky-400">
+                {s.no}
+              </p>
+              <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">{s.title}</h3>
+              <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">{s.desc}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</Layout>
