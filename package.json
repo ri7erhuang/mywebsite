@@ -12,8 +12,8 @@
     "publish": "node scripts/publish-post.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "astro build && wrangler pages deploy dist --project-name=mywebsite --branch=main --commit-dirty=true",
-    "cf:preview": "astro build && wrangler pages dev dist",
+    "deploy": "astro build && node --env-file=.env ./node_modules/wrangler/bin/wrangler.js pages deploy dist --project-name=mywebsite --branch=main --commit-dirty=true",
+    "cf:preview": "astro build && node --env-file=.env ./node_modules/wrangler/bin/wrangler.js pages dev dist",
     "cf:login": "wrangler login"
   },
   "dependencies": {

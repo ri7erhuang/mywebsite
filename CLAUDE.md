@@ -7,8 +7,8 @@
 - `npm run check` —— Astro 类型检查（改代码后运行）
 - `npm run publish` —— 把 `temp/` 收件箱里的 Markdown 发布上线（自动校验+提交+推送）
 - `npm run preview` —— 本地预览生产构建
-- `npm run deploy` —— 构建并部署到 Cloudflare Pages（Wrangler）
-- `npm run cf:login` —— 登录/授权 Wrangler
+- `npm run deploy` —— 构建并部署到 Cloudflare Pages（Wrangler，读取 `.env` 里的 `CLOUDFLARE_API_TOKEN`）
+- `npm run cf:login` —— 登录/授权 Wrangler（OAuth 方式，非 CI 场景可用）
 
 ## 项目结构
 
@@ -20,6 +20,7 @@
 - `src/components/Header.astro`、`Footer.astro`、`ToolShell.astro`
 - `scripts/publish-post.mjs` —— `npm run publish` 使用的发布脚本（读取 `temp/` 收件箱）
 - `wrangler.jsonc` —— Cloudflare Pages 配置（`pages_build_output_dir: ./dist`）
+- `.env` —— 本地保存 `CLOUDFLARE_API_TOKEN`（已被 gitignore，模板见 `.env.example`）
 - 上线前记得把 `astro.config.mjs` 里的 `site` 换成真实域名
 
 ## 开发
