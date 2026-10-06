@@ -1,7 +1,6 @@
 export const SITE = {
   title: "ri7er.cn",
-  description:
-    "Android 性能优化笔记：抓 trace、读源码、修卡顿。另有我日常在用的站点收藏与在线小工具。",
+  description: "记录折腾过的技术与生活笔记，另有我日常在用的站点收藏与在线小工具。",
   author: "ri7er",
   lang: "zh-CN",
 } as const;

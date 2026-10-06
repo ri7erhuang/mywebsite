@@ -7,8 +7,16 @@
 - `npm run check` —— Astro 类型检查（改代码后运行）
 - `npm run publish` —— 把 `temp/` 收件箱里的 Markdown 发布上线（自动校验+提交+推送）
 - `npm run preview` —— 本地预览生产构建
-- `npm run deploy` —— 构建并部署到 Cloudflare Pages（Wrangler，读取 `.env` 里的 `CLOUDFLARE_API_TOKEN`）
+- `npm run deploy` —— ⚠️ 已废弃，不要用于部署（Wrangler 直传）；部署一律走 GitHub，见「部署」一节
 - `npm run cf:login` —— 登录/授权 Wrangler（OAuth 方式，非 CI 场景可用）
+
+## 部署
+
+部署一律走 GitHub：把改动提交并 push 到 `main` 分支，Cloudflare Pages 会自动构建并部署（生产域名 `ri7er.cn`），PR 会自动生成预览部署。
+
+- **不要**使用 `npm run deploy` / `wrangler pages deploy` 直传部署，这会绕过 Git，容易让线上产物与仓库状态不一致。
+- 部署前先 `npm run check`，再 `git add` / `git commit` / `git push origin main`。
+- `npm run publish` 发布文章时同样会提交并推送，因此也会触发自动部署。
 
 ## 项目结构
 
@@ -20,7 +28,7 @@
 - `src/components/Header.astro`、`Footer.astro`、`ToolShell.astro`
 - `scripts/publish-post.mjs` —— `npm run publish` 使用的发布脚本（读取 `temp/` 收件箱）
 - `wrangler.jsonc` —— Cloudflare Pages 配置（`pages_build_output_dir: ./dist`）
-- `.env` —— 本地保存 `CLOUDFLARE_API_TOKEN`（已被 gitignore，模板见 `.env.example`）
+- `.env` —— 本地保存 `CLOUDFLARE_API_TOKEN`（已被 gitignore，模板见 `.env.example`；仅 Wrangler 直传等命令需要，正常部署用不到）
 - 上线前记得把 `astro.config.mjs` 里的 `site` 换成真实域名
 
 ## 开发
