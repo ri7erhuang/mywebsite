@@ -1,0 +1,41 @@
+---
+interface Props {
+  /** Bilibili 视频 BV 号，例如 BV11nG16zEfr */
+  bvid: string;
+  /** 播放器 iframe 的无障碍标题，通常传文章标题 */
+  title?: string;
+  /** 播放器下方的说明文字，默认「原视频」 */
+  label?: string;
+}
+
+const { bvid, title, label = "原视频" } = Astro.props;
+
+const src = `https://player.bilibili.com/player.html?bvid=${bvid}&page=1&high_quality=1&danmaku=0&autoplay=0`;
+const url = `https://www.bilibili.com/video/${bvid}/`;
+---
+
+<figure class="my-8">
+  <div class="overflow-hidden rounded-lg border border-slate-300/70 bg-ink dark:border-slate-800">
+    <div class="relative aspect-video">
+      <iframe
+        src={src}
+        title={title ? `${title} · Bilibili` : `Bilibili ${bvid}`}
+        loading="lazy"
+        allowfullscreen
+        class="absolute inset-0 h-full w-full"></iframe>
+    </div>
+  </div>
+  <figcaption
+    class="mt-2 flex flex-wrap items-center gap-x-2 font-mono text-xs text-slate-500 dark:text-slate-500"
+  >
+    <span class="text-emerald-700 dark:text-emerald-400">▶ {label}</span>
+    <a
+      href={url}
+      rel="noopener"
+      class="hover:text-emerald-700 hover:underline dark:hover:text-emerald-400"
+    >
+      {bvid}
+    </a>
+    <span class="text-slate-400 dark:text-slate-600">· Bilibili</span>
+  </figcaption>
+</figure>

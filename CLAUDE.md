@@ -26,6 +26,7 @@
 - `src/data/tools.ts` —— `/tools` 展示的工具清单
 - `src/layouts/Layout.astro` —— 共用页面外壳、主题脚本、SEO 标签
 - `src/components/Header.astro`、`Footer.astro`、`ToolShell.astro`
+- `src/components/VideoEmbed.astro` —— Bilibili 播放器；文章 frontmatter 里写 `bvid: BVxxxx` 即在正文前自动渲染（不填则不显示）
 - `scripts/publish-post.mjs` —— `npm run publish` 使用的发布脚本（读取 `temp/` 收件箱）
 - `wrangler.jsonc` —— Cloudflare Pages 配置（`pages_build_output_dir: ./dist`）
 - `.env` —— 本地保存 `CLOUDFLARE_API_TOKEN`（已被 gitignore，模板见 `.env.example`；仅 Wrangler 直传等命令需要，正常部署用不到）

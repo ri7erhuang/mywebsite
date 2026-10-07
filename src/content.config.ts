@@ -10,6 +10,8 @@ const blog = defineCollection({
     pubDate: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    /** Bilibili BV 号；填了就在正文前渲染播放器 */
+    bvid: z.string().optional(),
   }),
 });
 

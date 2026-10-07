@@ -4,6 +4,7 @@ description: 2026—2035 可能是普通人最近的一次翻身周期，核心�
 pubDate: 2026-09-14
 tags: ["经济周期", "AI应用", "商业化", "个体创业", "行业机会"]
 draft: false
+bvid: BV11nG16zEfr
 ---
 
 > 本文是对 Bilibili 视频《中国六轮翻身周期与 AI 时代普通人的低成本机会》的 AI 摘要整理，观点归属原视频讲述者，不代表本站立场。
@@ -88,4 +89,4 @@ draft: false
 
 ---
 
-来源：[Bilibili · BV11nG16zEfr](https://www.bilibili.com/video/BV11nG16zEfr/) ｜ 整理日期 2026-09-14
+> 整理日期 2026-09-14 · 内容由视频 ASR 转写 + AI 摘要生成，可能存在识别误差

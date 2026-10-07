@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import VideoEmbed from "../../components/VideoEmbed.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -29,6 +30,7 @@ const fmt = new Intl.DateTimeFormat("zh-CN", { dateStyle: "long" });
         ))}
       </div>
     </header>
+    {post.data.bvid && <VideoEmbed bvid={post.data.bvid} title={post.data.title} />}
     <div class="prose-content">
       <Content />
     </div>
